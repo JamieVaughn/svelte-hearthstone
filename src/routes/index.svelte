@@ -2,18 +2,20 @@
 	import { hearthstore } from '../stores/hearthstore';
 	import Card from '../components/card.svelte';
 	import { info } from '../data/info';
-	import type { Card as CardType } from '../types/Card';
+	import type { CardType } from '../../types/Card';
 	import { onMount } from 'svelte';
 
-	let race = 'Murloc';
+	const paths = ['races', 'classes', 'sets', 'types', 'factions', 'qualities'];
+	let path = 'races';
+	let option = 'Murloc';
 
 	type config = {
-		id: string;
+		option: string;
 		path: string;
 	};
 
-	const url = ({ id, path }: config): string =>
-		`https://omgvamp-hearthstone-v1.p.rapidapi.com/cards/${path}/${id}`;
+	const url = ({ option, path }: config): string =>
+		`https://omgvamp-hearthstone-v1.p.rapidapi.com/cards/${path}/${option}`;
 
 	export const options = {
 		method: 'GET',
@@ -23,21 +25,32 @@
 		}
 	};
 
-	const fetchCards = async () => {
-		if (hearthstore.length) return;
-		const response = await fetch(url({ id: race, path: 'races' }), options);
+	let error = null;
+
+	const fetchCards = async (arg: string) => {
+		// if (hearthstore) return hearthstore;
+		error = null;
+		console.log('url', url({ option: arg, path: path }));
+		const response = await fetch(url({ option: arg, path: path }), options);
+		console.log(response);
+		if (!response.ok) error = response.status;
 		const json = await response.json();
-		const cards = json.filter((c: Card) => c?.img);
+		const cards: CardType[] = json.filter((c: CardType) => c?.img);
 		console.log(json.length, cards.length, cards);
-		hearthstore.set(cards as unknown as Card);
+		hearthstore.set(cards);
 		return json;
 	};
 
 	onMount(() => {
-		fetchCards();
+		fetchCards(option);
 	});
 
-	console.log($hearthstore);
+	$: {
+		if (option) {
+			hearthstore.set([]);
+			fetchCards(option);
+		}
+	}
 
 	let search = '';
 	let filteredCards: Card[] = [];
@@ -51,23 +64,31 @@
 			filteredCards = [...$hearthstore];
 		}
 	}
-
-	$: {
-		if (race) fetchCards();
-	}
 </script>
 
 <svelte:head>
 	<title>Heathstone Viewer</title>
 </svelte:head>
 <h1>SvelteKit Hearthstone Viewer</h1>
-<select name="race" id="race" bind:value={race}>
-	{#each info.races as race}
-		<option value={race}>{race}</option>
+<select name="path" id="path" bind:value={path}>
+	<option value="">Select Option</option>
+	{#each paths as p}
+		<option value={p}>{p}</option>
+	{/each}
+</select>
+<select name="option" id="option" bind:value={option}>
+	<option value="">Select Option</option>
+	{#each info[path] as option}
+		<option value={option}>{option}</option>
 	{/each}
 </select>
 <input type="text" placeholder="Search Cards" bind:value={search} />
 <main>
+	{#if error}
+		<div>Error Loading Cards.</div>
+	{:else if !filteredCards.length}
+		<div>Loading...</div>
+	{/if}
 	{#each filteredCards as card}
 		<Card {card} />
 	{/each}
@@ -95,5 +116,9 @@
 		align-items: center;
 		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 		gap: 4px;
+	}
+	div {
+		grid-column: 1 / -1;
+		font-size: 3rem;
 	}
 </style>
