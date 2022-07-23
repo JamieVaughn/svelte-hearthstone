@@ -1,8 +1,8 @@
 <nav class="flex justify-center w-full">
 	<a href="/">Home</a>
-	<a href="/about">About</a>
-	<a href="/api/cards">Random-Num</a>
-	<a href="/api/cards/100">Random-times100</a>
+	<a href="/viewer">Viewer</a>
+	<a href="/api/cards">Rand</a>
+	<a href="/api/cards/100">Rand*100</a>
 </nav>
 
 <style>

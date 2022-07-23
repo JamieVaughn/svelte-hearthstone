@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+
 	import { fade } from 'svelte/transition';
 	import type { CardType } from '../../types/Card';
 	export let card: CardType;
@@ -6,11 +8,18 @@
 	export const handler = (e: any) => {
 		e.target.src = e.target.dataset.src;
 	};
+	let image;
+	onMount(() => {
+		window.addEventListener('scroll', (e) => {
+			console.log(e.target.scrollingElement.scrollHeight, image.pageYOffset);
+		});
+	});
 </script>
 
 <a href={`/card/${card.cardId}`} transition:fade>
 	<picture transition:fade>
 		<img
+			bind:this={image}
 			src="/loading.svg"
 			data-src={card.img}
 			alt={card.name}
