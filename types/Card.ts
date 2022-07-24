@@ -1,4 +1,5 @@
 export type CardType = {
+  Artist?: string
   attack: number
   cardId: string
   cardSet: string
@@ -9,6 +10,7 @@ export type CardType = {
   img: string
   locale: string
   name: string
+  playerClass: string
   race: string
   rarity: string
   type: string

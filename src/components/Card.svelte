@@ -3,15 +3,34 @@
 
 	import { fade } from 'svelte/transition';
 	import type { CardType } from '../../types/Card';
+	import { cardback } from '../data/info';
 	export let card: CardType;
 	export let width = 100;
-	export const handler = (e: any) => {
-		e.target.src = e.target.dataset.src;
-	};
-	let image;
+	export let autoload: boolean = false;
+	// export const handler = (e: any) => {
+	// 	e.target.src = e.target.dataset.src;
+	// };
+	// on:load={handler}
+	let image: HTMLImageElement;
+	let loaded: boolean = false;
+	const buffer = 1.5;
 	onMount(() => {
-		window.addEventListener('scroll', (e) => {
-			console.log(e.target.scrollingElement.scrollHeight, image.pageYOffset);
+		if ((image && window.scrollY + window.innerHeight > image.offsetTop) || autoload) {
+			image.src = image?.dataset.src || '';
+			loaded = true;
+			console.log(image.alt);
+		}
+		window.addEventListener('scroll', () => {
+			if (!loaded && image && window.scrollY + window.innerHeight * buffer > image.offsetTop) {
+				image.src = image?.dataset.src || '';
+				loaded = true;
+				console.log({
+					img: image.alt,
+					imgPos: image.offsetTop,
+					scroll: window.scrollY + window.innerHeight * buffer,
+					didLoad: window.scrollY + window.innerHeight * buffer > image.offsetTop
+				});
+			}
 		});
 	});
 </script>
@@ -20,12 +39,11 @@
 	<picture transition:fade>
 		<img
 			bind:this={image}
-			src="/loading.svg"
+			src={cardback.imgAnimated}
 			data-src={card.img}
 			alt={card.name}
 			{width}
 			loading="lazy"
-			on:load={handler}
 		/>
 		<p>{card.name}</p>
 	</picture>

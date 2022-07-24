@@ -166,3 +166,28 @@ export const info: Info = {
     TH_TH: 'thTH'
   },
 }
+interface Cardback {
+  cardBackId: string;
+  name: string;
+  description: string;
+  source: string;
+  enabled: boolean;
+  img: string;
+  imgAnimated: string;
+  sortCategory: string;
+  sortOrder: string;
+  locale: string;
+}
+
+export const cardback: Cardback = {
+  "cardBackId":"0",
+  "name":"Classic",
+  "description":"The only card back you'll ever need.",
+  "source":"0",
+  "enabled":true,
+  "img":"https://d15f34w2p8l1cc.cloudfront.net/hearthstone/49715e42324ffb11328cf4aa8ec3e7ad0b48bb6c45dba17eb42f53a8f162b554.png",
+  "imgAnimated":"https://d15f34w2p8l1cc.cloudfront.net/hearthstone/49715e42324ffb11328cf4aa8ec3e7ad0b48bb6c45dba17eb42f53a8f162b554.png",
+  "sortCategory":"1",
+  "sortOrder":"1",
+  "locale":"enUS",
+}
