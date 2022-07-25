@@ -1,5 +1,6 @@
 // type definition for info 
-type Info = {
+interface Info {
+  [key: string]: string[] | string | Record<string, string>,
   patch: string,
   classes: string[]
   sets: string[]
@@ -9,7 +10,6 @@ type Info = {
   factions: string[]
   qualities: string[]
   races: string[]
-  locales: Record<string, string>
 }
 
 type filters = {
@@ -22,8 +22,8 @@ type filters = {
 }
 
 export const info: Info = {
-  patch: '23.6.2.144772',
-  classes: [
+  "patch": '23.6.2.144772',
+  "classes": [
     'Death Knight', 
     'Druid',
     'Hunter',       
@@ -39,7 +39,7 @@ export const info: Info = {
     'Whizbang',     
     'Demon Hunter'
   ],
-  sets: [
+  "sets": [
     'Basic',
     'Classic',
     'Hall of Fame',
@@ -91,14 +91,14 @@ export const info: Info = {
     'Unknown',
     'Murder at Castle Nathria'
   ],
-  standard: [
+  "standard": [
     'Core',
     'Forged in the Barrens',
     'United in Stormwind',
     'Fractured in Alterac Valley',
     'Voyage to the Sunken City'
   ],
-  wild: [
+  "wild": [
     'Legacy',
     'Promo',
     'Naxxramas',
@@ -131,10 +131,10 @@ export const info: Info = {
     'Fractured in Alterac Valley',
     'Voyage to the Sunken City'
   ],
-  types: [ 'Hero', 'Minion', 'Spell', 'Enchantment', 'Weapon', 'Hero Power' ],
-  factions: [ 'Horde', 'Alliance', 'Neutral' ],
-  qualities: [ 'Common', 'Free', 'Rare', 'Epic', 'Legendary' ],
-  races: [
+  "types": [ 'Hero', 'Minion', 'Spell', 'Enchantment', 'Weapon', 'Hero Power' ],
+  "factions": [ 'Horde', 'Alliance', 'Neutral' ],
+  "qualities": [ 'Common', 'Free', 'Rare', 'Epic', 'Legendary' ],
+  "races": [
     'Orc',       
     'Murloc',
     'Demon',     
@@ -147,24 +147,24 @@ export const info: Info = {
     'All',
     'Quilboar',  
     'Naga'
-  ],
-  locales: {
-    DE_DE: 'deDE',
-    EN_GB: 'enGB',
-    EN_US: 'enUS',
-    ES_ES: 'esES',
-    ES_MX: 'esMX',
-    FR_FR: 'frFR',
-    IT_IT: 'itIT',
-    KO_KR: 'koKR',
-    PL_PL: 'plPL',
-    PT_BR: 'ptBR',
-    RU_RU: 'ruRU',
-    ZH_CN: 'zhCN',
-    ZH_TW: 'zhTW',
-    JA_JP: 'jaJP',
-    TH_TH: 'thTH'
-  },
+  ]
+}
+interface locales {
+  DE_DE: 'deDE',
+  EN_GB: 'enGB',
+  EN_US: 'enUS',
+  ES_ES: 'esES',
+  ES_MX: 'esMX',
+  FR_FR: 'frFR',
+  IT_IT: 'itIT',
+  KO_KR: 'koKR',
+  PL_PL: 'plPL',
+  PT_BR: 'ptBR',
+  RU_RU: 'ruRU',
+  ZH_CN: 'zhCN',
+  ZH_TW: 'zhTW',
+  JA_JP: 'jaJP',
+  TH_TH: 'thTH'
 }
 interface Cardback {
   cardBackId: string;

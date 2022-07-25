@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { hearthstore, path, value } from '../stores/hearthstore';
+	import { hearthstore, path, value, attr } from '../stores/hearthstore';
 	import { url, options } from '../utils/api';
 	import Card from '../components/card.svelte';
 	import { info } from '../data/info';
@@ -9,14 +9,14 @@
 	let status: number = -1;
 
 	const paths = ['classes', 'races', 'sets', 'types', 'factions', 'qualities'];
-
+	const attributes = ['name', 'cost', 'attack', 'health', 'faction', 'type', 'rarity'];
 	const fetchCards = async (arg: string) => {
 		status = -1;
 		const response = await fetch(url({ path: $path, value: arg }), options);
 		console.log(response, 'url', url({ path: $path, value: arg }));
 		try {
 			const json = await response.json();
-			const cards: CardType[] = await json.filter((c: CardType) => c?.img);
+			const cards = await json.filter((c: CardType) => c?.img);
 			console.log(json.length, cards.length, cards);
 			hearthstore.set(cards);
 			return json;
@@ -42,13 +42,21 @@
 	}
 
 	let search = '';
-	let filteredCards: Card[] = [];
+	let searchIsNumber: boolean = false;
+	let filteredCards: CardType[] = [];
 
 	$: {
+		searchIsNumber = ['cost', 'attack', 'health'].includes($attr);
 		if (search) {
-			filteredCards = $hearthstore.filter((card: CardType) =>
-				card.name.toLowerCase().includes(search.toLowerCase())
-			);
+			filteredCards = $hearthstore.filter((card: CardType) => {
+				if ($attr in card && typeof $attr === 'string') {
+					if (searchIsNumber) {
+						return card[$attr] == search;
+					} else {
+						return (card[$attr] as string)?.toLowerCase().includes(search.toLowerCase());
+					}
+				}
+			});
 		} else {
 			filteredCards = [...$hearthstore];
 		}
@@ -61,19 +69,31 @@
 <div class="container">
 	<h1>Search Cards</h1>
 	<div class="find-cards">
+		<label for="path">Select a category & option</label>
 		<select name="path" id="path" bind:value={$path}>
 			<option value="">Select Option</option>
 			{#each paths as p}
 				<option value={p}>{p}</option>
 			{/each}
 		</select>
-		<select name="option" id="option" bind:value={$value}>
+		<select name="value" id="value" bind:value={$value}>
 			<option value="">Select Option</option>
 			{#each info[$path] as opt}
 				<option value={opt}>{opt}</option>
 			{/each}
 		</select>
-		<input type="text" placeholder="Search Cards" bind:value={search} />
+		<label for="attribute">Filter by attribute</label>
+		<select name="attribute" id="attribue" bind:value={$attr}>
+			{#each attributes as attr}
+				<option value={attr}>{attr}</option>
+			{/each}
+		</select>
+		<input
+			type="text"
+			placeholder="Search Cards"
+			max={searchIsNumber ? 2 : ''}
+			bind:value={search}
+		/>
 	</div>
 	<article>
 		{#if status === -1}
@@ -83,7 +103,7 @@
 		{:else if status < 300 && !filteredCards.length}
 			<div class="msg">No Cards Found</div>
 		{:else}
-			{#each filteredCards as card}
+			{#each filteredCards as card (card.cardId)}
 				<Card {card} />
 			{/each}
 		{/if}
@@ -102,7 +122,8 @@
 		grid-template-columns: 1fr 1fr;
 		gap: 4px;
 	}
-	.find-cards input {
+	.find-cards label {
+		text-align: center;
 		grid-column: 1 / span 2;
 	}
 	input,
