@@ -104,7 +104,7 @@
 			<div class="msg">No Cards Found</div>
 		{:else}
 			{#each filteredCards as card (card.cardId)}
-				<Card {card} />
+				<Card {card} controls />
 			{/each}
 		{/if}
 	</article>

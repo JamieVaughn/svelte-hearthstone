@@ -1,12 +1,14 @@
 <script>
 	import { cardback } from '../data/info';
+	import { activeDeck } from '../stores/hearthstore';
 </script>
 
 <nav class="flex justify-center w-full">
 	<a class="logo" href="/"><img src={cardback.img} alt="Hearthstone card back logo" /></a>
 	<h1 class="title">Hearthstone Deck Builder</h1>
 	<a class="cards" href="/cards">Cards</a>
-	<a class="deck" href="/deck">Deck</a>
+	<a class="deck" href="/decks">Decks</a>
+	<div class="active-deck">Active Deck: {$activeDeck}</div>
 </nav>
 
 <style>
@@ -18,7 +20,7 @@
 		align-items: center;
 		grid-template-columns: 100px 100px 1fr 100px 100px;
 		grid-template-areas:
-			'logo . title . .'
+			'logo . title . active-deck'
 			'. . . cards deck';
 	}
 	h1 {
@@ -62,6 +64,11 @@
 	}
 	.deck {
 		grid-area: deck;
+	}
+	.active-deck {
+		padding: 0 4px;
+		text-align: center;
+		grid-area: active-deck;
 	}
 
 	@keyframes spin {
