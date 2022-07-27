@@ -27,7 +27,7 @@
 	<h1>{card.name}</h1>
 	<main>
 		<div>
-			<Card {card} width={300} autoload />
+			<Card {card} width={300} autoload controls />
 			<p>Id: {card.cardId}</p>
 			<p>Type: {card.type}</p>
 			<p>Player Class: {card.playerClass}</p>

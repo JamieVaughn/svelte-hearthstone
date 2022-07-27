@@ -1,60 +1,67 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { activeDeck, appendToActiveDeck } from '../stores/hearthstore';
+	import { onMount, onDestroy } from 'svelte';
+	import { appendToActiveDeck } from '../stores/hearthstore';
 	import { fade } from 'svelte/transition';
 	import type { CardType } from '../../types/Card';
 	import { cardback } from '../data/info';
+	import { dataset_dev } from 'svelte/internal';
 
 	export let card: CardType;
 	export let width = 100;
 	export let autoload: boolean = false;
 	export let controls: boolean = false;
+	export let loaded: boolean = false;
 
 	let image: HTMLImageElement;
-	let loaded: boolean = false;
 	const buffer = 1.5;
 
+	let scrollLoader: undefined | ((e: Event) => void);
+
 	onMount(() => {
-		if ((image && window.scrollY + window.innerHeight > image.offsetTop) || autoload) {
-			image.src = image?.dataset.src || '';
+		if (!image) return;
+		if (
+			autoload ||
+			window.innerHeight - document.documentElement.scrollHeight < 10 ||
+			window.scrollY + window.innerHeight > image.offsetTop
+		) {
 			loaded = true;
-			console.log(image.alt);
+			return;
 		}
-		window.addEventListener('scroll', () => {
+		scrollLoader = (_) => {
 			if (!loaded && image && window.scrollY + window.innerHeight * buffer > image.offsetTop) {
-				image.src = image?.dataset.src || '';
 				loaded = true;
-				console.log({
-					img: image.alt,
-					imgPos: image.offsetTop,
-					scroll: window.scrollY + window.innerHeight * buffer,
-					didLoad: window.scrollY + window.innerHeight * buffer > image.offsetTop
-				});
 			}
-		});
+		};
+		document.addEventListener('scroll', scrollLoader);
+	});
+
+	onDestroy(() => {
+		if (scrollLoader) document.removeEventListener('scroll', scrollLoader);
 	});
 </script>
 
-<div>
-	<a href={`/card/${card.cardId}`} transition:fade>
-		<picture transition:fade>
+<div transition:fade>
+	<a href={`/card/${card.cardId}`}>
+		<picture>
 			<img
 				bind:this={image}
-				src={cardback.imgAnimated}
+				src={loaded ? image.dataset.src : cardback.imgAnimated}
 				data-src={card.img}
 				alt={card.name}
 				{width}
 				loading="lazy"
 			/>
-			<p>{card.name}</p>
 		</picture>
 	</a>
-	{#if controls}
-		<button
-			class="bg-blue-500 hover:bg-blue-700 text-white font-bold px-1.5 rounded"
-			on:click={() => appendToActiveDeck(card)}>+</button
-		>
-	{/if}
+	<p>
+		{card.name}
+		{#if controls}
+			<button
+				class="bg-blue-500 hover:bg-blue-700 text-white font-bold px-1.5 rounded"
+				on:click={() => appendToActiveDeck(card)}>+</button
+			>
+		{/if}
+	</p>
 </div>
 
 <style>

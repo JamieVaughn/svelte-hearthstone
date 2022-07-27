@@ -7,8 +7,8 @@
 	import type { CardType } from '../../types/Card';
 
 	export let cards: CardType[] = [];
-	const deck: Deck = $decks.find((deck) => deck.name === $activeDeck);
-	onMount(async () => {
+	let deck: Deck = $decks.find((d) => d.name === $activeDeck) || $decks[0];
+	onMount(() => {
 		Promise.all(
 			deck?.cards?.map(async (card) => {
 				const response = await fetch(url({ path: card, value: '' }), options);
@@ -16,8 +16,8 @@
 				return json[0];
 			})
 		).then((data) => {
-			console.log(data);
-			cards = data; // have to set the prop using = instead of .push() for reactivity
+			console.log('mount', data);
+			cards = data; // have to set the prop using "=" instead of .push() for reactivity
 		});
 	});
 
@@ -25,7 +25,8 @@
 		if (event?.target?.value) switchDeck(event.target.value);
 	};
 	$: {
-		if ($activeDeck) {
+		if ($activeDeck !== deck.name) {
+			deck = $decks.find((d) => d.name === $activeDeck) || $decks[0];
 			Promise.all(
 				deck?.cards?.map(async (card) => {
 					const response = await fetch(url({ path: card, value: '' }), options);
@@ -33,7 +34,7 @@
 					return json[0];
 				})
 			).then((data) => {
-				console.log(data);
+				console.log('update', data);
 				cards = data; // have to set the prop using = instead of .push() for reactivity
 			});
 		}
@@ -41,16 +42,18 @@
 </script>
 
 <div class="container">
-	<h1>Your Deck:</h1>
-	<select name="deck" id="deck" bind:value={$activeDeck} on:input={changeDeck}>
-		{#each $decks as deck}
-			<option selected={deck.name === $activeDeck ? true : false} value={deck.name}>
-				{deck.name}
-			</option>
-		{/each}
-	</select>
+	<div class="flex">
+		<h1>Your Deck:</h1>
+		<select name="deck" id="deck" bind:value={$activeDeck} on:input={changeDeck}>
+			{#each $decks as deck}
+				<option selected={deck.name === $activeDeck ? true : false} value={deck.name}>
+					{deck.name}
+				</option>
+			{/each}
+		</select>
+	</div>
 	<article>
-		{#each cards as card}
+		{#each cards as card (card.cardId)}
 			<Card {card} />
 		{/each}
 	</article>
@@ -62,6 +65,13 @@
 		text-align: center;
 		margin: 2rem auto 1rem;
 		text-transform: uppercase;
+	}
+	div.flex {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 8px;
+		margin-bottom: 1rem;
 	}
 	select {
 		margin: 0 auto;

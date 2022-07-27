@@ -13,7 +13,7 @@ export interface Deck {
 }
 
 const starter = {name: 'Starter Deck', cards: ['PVPDR_Hero_Slate', 'VAN_EX1_554t', 'OG_070', 'GVG_093']}
-const booster = {name: 'Booster Pack', cards: ['UNG_920t2', 'UNG_915', 'UNG_915']}
+const booster = {name: 'Booster Pack', cards: ['UNG_920t2', 'UNG_914', 'UNG_915', 'TRL_347t', 'BGS_075']}
 
 export const decks = writable<Deck[]>([starter, booster])
 export const activeDeck = writable<string>(starter.name);
