@@ -17,6 +17,8 @@ npm run dev
 npm run dev -- --open
 ```
 
+For svelte-typescript patterns see [here](https://github.com/ivanhofer/sveltekit-typescript-showcase)
+
 ## Building
 
 To create a production version of your app:
