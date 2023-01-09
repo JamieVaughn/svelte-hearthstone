@@ -1,6 +1,8 @@
 # Hearthstone Sveltekit App
 
-View hearthstone cards in your browser
+View hearthstone cards and their details in your browser from the hearthstone rapidAPI and select cards to save into different decks for later review.
+
+![App Screenshot](/public/hearthstone_deckbuilder.jpg)
 
 # create-svelte
 
